@@ -1,24 +1,49 @@
 let models = require('../models')
+var Sequelize = require('sequelize');
 
+var randomBarcode = function(strln,round){
+  	var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZ"
+    var value = ''
+    for(var i = 0; i< strln;i++){
+      for(var j = 0; j<round;j++){
+        var rnum = Math.floor(Math.random() * chars.length) ;
+      }
+      value += chars.substring(rnum,rnum+1);
+    }
+    return value
+}
 module.exports={
   create: function (req,res) {
+    const Op = Sequelize.Op;
+    let _barcode = randomBarcode(3,1)
     var result={
       success: false,
       status: "ERROR",
       vocherCode: null
     }
-    models.VocherCode.create({
-      activated: false,
-      expiryDate: req.body.expiryDate,
-      outletOrigin: req.body.outletOrigin,
-      barcode: req.body.barcode,
+    models.VocherCode.findAll({
+      where:{
+        barcode:{
+          [Op.notLike]: _barcode
+        }
+      }
     }).then(vocherCode=>{
-      result.success= true
-      result.status= "OK"
-      result.vocherCode= vocherCode
-      res.json(result)
+      models.VocherCode.create({
+        activated: false,
+        expiryDate: req.body.expiryDate,
+        outletOrigin: req.body.outletOrigin,
+        barcode: _barcode,
+      }).then(vocherCode=>{
+        result.success= true
+        result.status= "OK"
+        result.vocherCode= vocherCode
+        res.json(result)
+      }).catch(err=>{
+        console.log('Error when trying create new vocherCode: ', err);
+        res.json(result)
+      })
     }).catch(err=>{
-      console.log('Error when trying create new vocherCode: ', err);
+      console.log('Error barcode ', err);
       res.json(result)
     })
   },
