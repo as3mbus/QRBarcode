@@ -3,13 +3,11 @@ module.exports = (sequelize, DataTypes) => {
   var VocherCode = sequelize.define('VocherCode', {
     activated: DataTypes.BOOLEAN,
     expiryDate: DataTypes.DATE,
-    outletOrigin: DataTypes.INTEGER
-  }, {
-    classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-      }
-    }
-  });
+    outletOrigin: DataTypes.INTEGER,
+    barcode: DataTypes.STRING
+  }, {});
+  VocherCode.associate = function(models){
+    VocherCode.belongsTo(models.Outlet,{foreignKey:'outletOrigin'})
+  }
   return VocherCode;
 };
