@@ -10,6 +10,8 @@ var config = require('./config/config')
 var index = require('./routes/index');
 var users = require('./routes/users');
 var outlet = require('./routes/outlet');
+var outletCode = require('./routes/outletCode');
+var vocherCode = require('./routes/vocherCode');
 
 require('dotenv').config()
 
@@ -33,6 +35,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/outlet', outlet);
+app.use('/outletcode', outletCode);
+app.use('/vochercode', vocherCode);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
