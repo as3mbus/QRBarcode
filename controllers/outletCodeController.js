@@ -16,27 +16,33 @@ module.exports={
       include:[{model: models.Outlet}]
     }).then(vocherCode=>{
       if(vocherCode.activated== true){
+        console.log(vocherCode.id);
+        console.log(req.body.outletId);
         let Op = Sequelize.Op
         models.OutletCode.findOne({
           where:{
-            [Op.not]:{
-              codeId: vocherCode.id,
-              outletId: vocherCode.Outlet.id
-            }
+            codeId:vocherCode.id,
+            outletId:req.body.outletId
           }
         }).then(outletCode=>{
-          models.OutletCode.create({
-            codeId: vocherCode.id,
-            outletId: vocherCode.Outlet.id
-          }).then(outletCode=>{
-            result.success= true
-            result.status= "OK"
-            result.outletCode= outletCode
-            res.json(result)
-          }).catch(err=>{
-            console.log('Error when trying create new outletCode: ', err);
-            res.json(result)
-          })
+          if(outletCode == null){
+            models.OutletCode.create({
+              codeId: vocherCode.id,
+              outletId: req.body.outletId
+            }).then(outletCode=>{
+              result.success= true
+              result.status= "OK"
+              result.outletCode= outletCode
+              res.json(result)
+            }).catch(err=>{
+              console.log('Error when trying create new outletCode: ', err);
+              res.json(result)
+            })
+          }
+          else{
+              result.outletCode= "Vocher sudah di redeem"
+              res.json(result)
+          }
         }).catch(err=>{
           console.log('Error when Search VocherCode: ', err);
           res.json(result)
