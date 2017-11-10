@@ -1,6 +1,4 @@
 let models = require('../models')
-var Sequelize = require('sequelize');
-
 var randomBarcode = function(strln,round){
   	var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZ"
     var value = ''
@@ -14,7 +12,6 @@ var randomBarcode = function(strln,round){
 }
 module.exports={
   create: function (req,res) {
-    const Op = Sequelize.Op;
     let _barcode = randomBarcode(3,1)
     var result={
       success: false,
@@ -22,12 +19,15 @@ module.exports={
       vocherCode: null
     }
     models.VocherCode.findAll({
-      where:{
-        barcode:{
-          [Op.notLike]: _barcode
-        }
-      }
+      attributes:['barcode']
     }).then(vocherCode=>{
+      let arrybarcode = []
+      for(var i = 0; i<vocherCode.length;i++){
+        arrybarcode.push(vocherCode[i].barcode)
+      }
+      while(arrybarcode.indexOf(_barcode)!= -1){
+        _barcode = randomBarcode(3,1)
+      }
       models.VocherCode.create({
         activated: false,
         expiryDate: req.body.expiryDate,

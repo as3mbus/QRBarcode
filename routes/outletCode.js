@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var vocherCodeController = require('../controllers/vocherCodeController')
+var outletCodeController = require('../controllers/outletCodeController')
 /* GET users listing. */
 
-router.post('/create', vocherCodeController.create)
+router.post('/create', outletCodeController.create)
 module.exports = router;
